@@ -1,50 +1,266 @@
-<!doctype html>
-<html lang="ru">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>ОФИГЕННЫЙ САЙТ С МУСОРОМ</title>
-<link rel="stylesheet" href="assets/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nhub</title>
+  <style>
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --accent: #00b4d8;
+      --overlay: rgba(0, 0, 0, 0.55);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   Helvetica, Arial, sans-serif;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px 20px 60px;
+      background: #111;
+    }
+
+    .bg-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+    }
+
+    .bg-layer::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--overlay);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .avatar {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      box-shadow: 0 0 0 4px rgba(255,255,255,.15);
+      margin-bottom: 4px;
+      user-select: none;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      text-align: center;
+      text-shadow: 0 2px 8px rgba(0,0,0,.4);
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      opacity: 0.75;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .link-list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .link-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      padding: 16px 22px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      text-decoration: none;
+      color: #fff;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .link-card:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: var(--accent);
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25),
+                  0 0 0 1px var(--accent);
+    }
+
+    .link-card:active {
+      transform: translateY(0) scale(0.99);
+    }
+
+    .link-text { flex: 1; }
+
+    .link-title {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .link-desc {
+      font-size: 0.8rem;
+      opacity: 0.55;
+      margin-top: 2px;
+    }
+
+    .link-arrow {
+      font-size: 1.2rem;
+      opacity: 0.3;
+      transition: opacity 0.25s, transform 0.25s;
+    }
+
+    .link-card:hover .link-arrow {
+      opacity: 0.8;
+      transform: translateX(4px);
+    }
+
+    .status-msg {
+      text-align: center;
+      padding: 30px;
+      opacity: 0.6;
+      font-size: 0.95rem;
+    }
+
+    .status-msg.error { color: #ff6b6b; opacity: 1; }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 0.75rem;
+      opacity: 0.35;
+      text-align: center;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .link-card {
+      opacity: 0;
+      animation: fadeUp 0.45s ease forwards;
+    }
+  </style>
 </head>
+
 <body>
-<header class="top">
-<div class="logo">ОФИГЕННЫЙ САЙТ С МУСОРОМ</div>
-<nav><a href="/">Главная</a> · <a href="games.html">Репо (Игры)</a> · <a href="admin.html">Вход (админ)</a></nav>
-</header>
+  <div class="bg-layer" id="bgLayer"></div>
+  <div class="container" id="app">
+    <div class="status-msg" id="loading">Loading links…</div>
+  </div>
 
+  <script>
+    (async function () {
+      const app     = document.getElementById('app');
+      const bgLayer = document.getElementById('bgLayer');
 
-<main class="container">
-<aside class="sidebar">⚠️ UNDER CONSTRUCTION<br><span class="tiny"></span></aside>
+      try {
+        const res = await fetch('config.json');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const cfg = await res.json();
 
+        if (cfg.accentColor) {
+          document.documentElement.style.setProperty('--accent', cfg.accentColor);
+        }
+        if (cfg.backgroundOverlay) {
+          document.documentElement.style.setProperty('--overlay', cfg.backgroundOverlay);
+        }
 
-<section class="content">
-<h1>Добро пожаловать на мой говно-сайт!</h1>
-<p class="lead">Здесь будет ничего</p>
+        if (cfg.backgroundImage) {
+          bgLayer.style.backgroundImage = `url('${cfg.backgroundImage}')`;
+        }
 
+        document.title = cfg.siteTitle || 'Nhub';
+        let html = '';
 
-<div class="big">
-<img src="assets/retro-banner.png" alt="banner" style="max-width:100%" />
-</div>
+        const initial = (cfg.siteTitle || 'L').charAt(0).toUpperCase();
+        html += `<div class="avatar">${initial}</div>`;
 
+        html += `<h1>${escapeHTML(cfg.siteTitle || 'Nhub')}</h1>`;
+        if (cfg.subtitle) {
+          html += `<p class="subtitle">${escapeHTML(cfg.subtitle)}</p>`;
+        }
 
-<div class="cards" id="featured">
-<div class="card big-card">Самое важный калл</div>
-<div class="card">Релизы</div>
-<div class="card"></div>
-</div>
+        if (cfg.links && cfg.links.length) {
+          html += '<div class="link-list">';
+          cfg.links.forEach((link, i) => {
+            const delay = (i * 0.06).toFixed(2);
+            html += `
+              <a class="link-card"
+                 href="${escapeAttr(link.url)}"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 style="animation-delay:${delay}s">
+                <div class="link-text">
+                  <div class="link-title">${escapeHTML(link.title)}</div>
+                  ${link.description
+                    ? `<div class="link-desc">${escapeHTML(link.description)}</div>`
+                    : ''}
+                </div>
+                <span class="link-arrow">→</span>
+              </a>`;
+          });
+          html += '</div>';
+        } else {
+          html += '<div class="status-msg">No links configured yet.</div>';
+        }
 
+        html += '<div class="footer">Powered by Nhub</div>';
 
-<hr>
-<p class="small">Список игр — <a href="games.html">сюда</a>.</p>
-</section>
-</main>
+        app.innerHTML = html;
 
+      } catch (err) {
+        app.innerHTML = `
+          <div class="status-msg error">
+            ⚠ Could not load <strong>config.json</strong><br>
+            <small>${escapeHTML(err.message)}</small>
+          </div>`;
+        console.error('Nhub error:', err);
+      }
 
-<footer class="foot">© 2025 — Угрозы провайдеру не обещаем. а кто это вообще читает?.</footer>
+      function escapeHTML(str) {
+        const d = document.createElement('div');
+        d.textContent = str;
+        return d.innerHTML;
+      }
 
-
-<script src="assets/script.js"></script>
+      function escapeAttr(str) {
+        return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+      }
+    })();
+  </script>
 </body>
-
 </html>
-
