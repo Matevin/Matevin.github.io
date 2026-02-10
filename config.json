@@ -1,0 +1,59 @@
+    {
+  "siteTitle": "Nhub",
+  "subtitle": "games",
+  "backgroundImage": "background.jpg",
+  "backgroundOverlay": "rgba(0, 0, 0, 0.55)",
+  "accentColor": "#00b4d8",
+  "links": [
+    {
+      "title": "SuperTuxKart",
+      "url": "https://github.com/supertuxkart/stk-code/releases/download/1.5/SuperTuxKart-1.5-win.zip",
+      "description": "гонки"
+    },
+    {
+      "title": "Temp",
+      "url": "https://example.com",
+      "description": "Temp"
+    },
+    {
+      "title": "Temp",
+      "url": "https://example.com",
+      "description": "Temp"
+    },
+    {
+      "title": "Temp",
+      "url": "https://example.com",
+      "description": "Temp"
+    },
+    {
+      "title": "Temp",
+      "url": "https://example.com",
+      "description": "Temp"
+    },
+    {
+      "title": "Temp",
+      "url": "https://example.com",
+      "description": "Temp"
+    },
+    {
+      "title": "Temp",
+      "url": "https://example.com",
+      "description": "Temp"
+    },
+    {
+      "title": "Temp",
+      "url": "https://example.com",
+      "description": "Temp"
+    },
+    {
+      "title": "Temp",
+      "url": "mailto:MAZELLOFFTHEBEST@gmail.com",
+      "description": "Temp"
+    },
+    {
+      "title": "Temp",
+      "url": "https://example.com",
+      "description": "Temp"
+    }
+  ]
+}
