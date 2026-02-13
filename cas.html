@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neon Dream Casino</title>
+    <style>
+        body {
+            background-color: #1a1a2e;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .casino-container {
+            background: #16213e;
+            padding: 2rem;
+            border-radius: 20px;
+            border: 4px solid #0f3460;
+            box-shadow: 0 0 20px #e94560;
+            text-align: center;
+        }
+
+        .slot-machine {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .reel {
+            width: 80px;
+            height: 100px;
+            background: #0f3460;
+            border: 2px solid #e94560;
+            border-radius: 10px;
+            font-size: 3rem;
+            line-height: 100px;
+            text-shadow: 0 0 10px #fff;
+        }
+
+        .stats {
+            margin: 20px 0;
+            font-size: 1.2rem;
+        }
+
+        button {
+            background-color: #e94560;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.1s, background-color 0.3s;
+            box-shadow: 0 5px #952e3f;
+        }
+
+        button:hover {
+            background-color: #ff4d6d;
+        }
+
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px #952e3f;
+        }
+
+        button:disabled {
+            background-color: #444;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        #message {
+            height: 1.5rem;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="casino-container">
+        <h1>🎰 NEON SLOTS 🎰</h1>
+        
+        <div class="stats">
+            FREE SPINS REMAINING: <span id="spin-count" style="color: #e94560; font-weight: bold;">10</span>
+        </div>
+
+        <div class="slot-machine">
+            <div id="reel1" class="reel">?</div>
+            <div id="reel2" class="reel">?</div>
+            <div id="reel3" class="reel">?</div>
+        </div>
+
+        <button id="spin-btn" onclick="spin()">SPIN!</button>
+        
+        <div id="message">Press Spin to try your luck!</div>
+    </div>
+
+    <script>
+        let spinsLeft = 10;
+        const symbols = ['🍒', '🍋', '🔔', '💎', '7️⃣'];
+        const spinBtn = document.getElementById('spin-btn');
+        const countDisplay = document.getElementById('spin-count');
+        const message = document.getElementById('message');
+
+        function getRandomSymbol() {
+            return symbols[Math.floor(Math.random() * symbols.length)];
+        }
+
+        function spin() {
+            if (spinsLeft <= 0) return;
+
+            // Update spins
+            spinsLeft--;
+            countDisplay.innerText = spinsLeft;
+            message.innerText = "Spinning...";
+            spinBtn.disabled = true;
+
+            // Simple animation effect using intervals
+            let timer = 0;
+            const interval = setInterval(() => {
+                document.getElementById('reel1').innerText = getRandomSymbol();
+                document.getElementById('reel2').innerText = getRandomSymbol();
+                document.getElementById('reel3').innerText = getRandomSymbol();
+                timer++;
+
+                if (timer > 10) {
+                    clearInterval(interval);
+                    checkWin();
+                }
+            }, 100);
+        }
+
+        function checkWin() {
+            const r1 = document.getElementById('reel1').innerText;
+            const r2 = document.getElementById('reel2').innerText;
+            const r3 = document.getElementById('reel3').innerText;
+
+            if (r1 === r2 && r2 === r3) {
+                message.innerText = "🎉 JACKPOT! You won 5 extra spins!";
+                message.style.color = "#44ff44";
+                spinsLeft += 5;
+                countDisplay.innerText = spinsLeft;
+            } else if (r1 === r2 || r2 === r3 || r1 === r3) {
+                message.innerText = "Nice! You got a pair!";
+                message.style.color = "#00d4ff";
+            } else {
+                message.innerText = "Better luck next time!";
+                message.style.color = "#ff4d6d";
+            }
+
+            if (spinsLeft > 0) {
+                spinBtn.disabled = false;
+            } else {
+                message.innerText = "GAME OVER - No spins left!";
+                spinBtn.innerText = "OUT OF SPINS";
+            }
+        }
+    </script>
+</body>
+</html>
